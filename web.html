@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#2e7d32">
+  <title>登录 · 森绿极简</title>
+  <!-- 登录页样式（切换到应用后会移除） -->
+  <style id="login-style">
+    :root {
+      --forest: #2e7d32;      /* 主色：森绿 */
+      --forest-600: #256d2a;  /* 悬停/按压 */
+      --forest-700: #1f5e25;  /* 更深 */
+      --bg: #f3f6f3;          /* 背景淡绿灰 */
+      --surface: #ffffff;     /* 面板 */
+      --text: #101510;        /* 主文字 */
+      --muted: #6b756b;       /* 次级文字 */
+      --ring: rgba(46, 125, 50, 0.45); /* 聚焦高亮 */
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08), 0 2px 10px rgba(0,0,0,0.04);
+      --gap: 14px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(46,125,50,0.08), transparent 60%),
+                  radial-gradient(800px 400px at 110% 10%, rgba(46,125,50,0.06), transparent 60%),
+                  var(--bg);
+      display: grid;
+      place-items: center;
+    }
+    .card {
+      width: min(92vw, 420px);
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      border: 1px solid rgba(46,125,50,0.10);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .brand svg { flex: none; }
+    .brand strong { font-size: 18px; letter-spacing: 0.4px; }
+    .muted { color: var(--muted); font-size: 14px; margin: 0 0 18px; }
+    h1 { margin: 0 0 4px; font-size: 22px; }
+    form { display: grid; gap: var(--gap); }
+    label { font-size: 14px; color: var(--muted); display: block; margin-bottom: 6px; }
+    .field { display: grid; gap: 6px; }
+    .input { width: 100%; height: 44px; padding: 0 12px; border: 1px solid rgba(16,21,16,0.15); border-radius: 10px; background: #fff; color: var(--text); transition: box-shadow .15s ease, border-color .15s ease; }
+    .input::placeholder { color: #99a199; }
+    .input:focus { outline: none; border-color: var(--forest); box-shadow: 0 0 0 3px var(--ring); }
+    /* 调整密码行为网格布局，使显隐按钮在输入框内垂直居中 */
+    .password-row { position: relative; display: grid; grid-template-columns: 1fr; grid-template-rows: auto 44px; }
+    .password-row label { grid-row: 1; }
+    .password-row .input { grid-row: 2; padding-right: 72px; }
+    .toggle { grid-row: 2; position: relative; right: 8px; top: 0; transform: none; height: 32px; padding: 0 10px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--forest-700); cursor: pointer; font-size: 12px; justify-self: end; align-self: center; z-index: 1; }
+    .toggle:hover { background: rgba(46,125,50,0.06); }
+    .toggle:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .check { display: inline-flex; align-items: center; gap: 8px; user-select: none; cursor: pointer; color: var(--muted); font-size: 14px; }
+    .check input { width: 16px; height: 16px; accent-color: var(--forest); }
+    .btn { height: 46px; border: 0; border-radius: 10px; cursor: pointer; background: var(--forest); color: #fff; font-weight: 600; letter-spacing: .3px; transition: transform .03s ease, filter .15s ease, box-shadow .2s ease; box-shadow: 0 6px 16px rgba(46,125,50,.25); }
+    .btn:hover { filter: brightness(0.98); }
+    .btn:active { transform: translateY(1px); box-shadow: 0 4px 12px rgba(46,125,50,.22); }
+    .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring), 0 6px 16px rgba(46,125,50,.25); }
+    .links { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+    .link { color: var(--forest-700); text-decoration: none; font-size: 14px; }
+    .link:hover { text-decoration: underline; }
+    footer { text-align: center; margin-top: 18px; color: var(--muted); font-size: 12px; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #0e120f; --surface: #141a15; --text: #e7eee7; --muted: #a8b2a8; --shadow: none; }
+      body { background: radial-gradient(1000px 500px at -10% -10%, rgba(46,125,50,0.18), transparent 60%), var(--bg); }
+      .input { background: #0f1410; border-color: rgba(231,238,231,0.14); color: var(--text); }
+      .input::placeholder { color: #7e897e; }
+      .toggle { color: #cfe7d1; }
+      .link { color: #b6e0b8; }
+      .card { border-color: rgba(46,125,50,0.20); }
+    }
+  </style>
+  <!-- 应用页样式（来自 demo2.html，保持原样） -->
+  <style id="app-style">
+    :root{ --theme:#2e7d32; --theme-weak:#e8f3ea; --ink:#1f2937; --muted:#6b7280; --bg:#f7f8fa; --card:#ffffff; --radius:14px; }
+    *{ box-sizing:border-box; } html,body{ height:100%; }
+    body{ margin:0; background:var(--bg); color:var(--ink); font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+    .topbar{ position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:12px; padding:10px 14px; background:#fff; border-bottom:1px solid #eef2f7; }
+    .progress{ margin-left:auto; font-weight:700; color:var(--theme); background:var(--theme-weak); padding:4px 10px; border-radius:999px; }
+    .wrap{ display:grid; grid-template-columns:280px minmax(0,1fr); gap:18px; max-width:1500px; margin:0 auto; padding:16px; }
+    @media (max-width:900px){ .wrap{ grid-template-columns:1fr; } .sidebar{ order:2; } .main{ order:1; } }
+    .sidebar{ background:#fff; border:1px solid #eef2f7; border-radius:var(--radius); padding:12px; position:sticky; top:62px; height:calc(100vh - 78px); overflow:auto; }
+    .search{ width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; outline:none; }
+    .audio-list{ margin-top:10px; display:flex; flex-direction:column; gap:8px; }
+    .audio-item{ border:1px solid #eef2f7; border-radius:12px; padding:8px; display:flex; align-items:center; gap:8px; background:#fff; transition:background .15s ease,border-color .15s ease; }
+    /* 确认后：左侧列表方框变为“确认修改”按钮同款绿色 */
+    .audio-item.confirmed{ background:var(--theme); border-color:var(--theme); }
+    .audio-item.confirmed .name{ color:#fff; }
+    .audio-item.confirmed .btn-ghost{ background:transparent; color:#fff; border-color:rgba(255,255,255,.9); }
+    .audio-item.confirmed .btn-play{ background:#fff; color:var(--theme); }
+    .audio-item .name{ flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .btn{ border:none; cursor:pointer; border-radius:10px; padding:6px 10px; font-weight:600; }
+    .btn-play{ background:var(--theme); color:#fff; }
+    .btn-ghost{ background:transparent; color:var(--theme); border:1px solid var(--theme); }
+    .main{ display:flex; flex-direction:column; gap:12px; max-width:1000px; }
+    .card{ background:var(--card); border:1px solid #eef2f7; border-radius:var(--radius); padding:12px; display:flex; flex-direction:column; gap:10px; }
+    .row{ background:#f7faf8; border:1px dashed #dfeae1; border-radius:10px; padding:10px 12px; }
+    .row .label{ color:var(--muted); font-size:12px; margin-bottom:4px; }
+    .row .text{ white-space:pre-wrap; }
+    .badge{ background:var(--theme-weak); color:var(--theme); padding:2px 8px; border-radius:999px; font-weight:700; font-size:12px; margin-right:8px; }
+    textarea{ width:100%; min-height:80px; resize:vertical; padding:10px 12px; border-radius:10px; border:1px solid #e5e7eb; outline:none; }
+    .bottom{ display:grid; grid-template-columns:110px 1fr; gap:10px; align-items:center; }
+    .confirm-btn{ width:100%; height:40px; border:none; border-radius:12px; background:var(--theme); color:#fff; font-weight:800; cursor:pointer; box-shadow:0 6px 12px rgba(46,125,50,.15); }
+    .confirm-btn.ghost{ background:transparent; color:var(--theme); border:2px solid var(--theme); }
+    .audio-box{ display:flex; align-items:center; gap:8px; border:1px solid #eef2f7; border-radius:10px; padding:8px 10px; background:#fff; }
+    .audio-tip{ font-size:12px; color:#9ca3af; }
+    .empty{ text-align:center; padding:28px; color:var(--muted); }
+    .fab{ position:fixed; right:20px; bottom:20px; z-index:30; background:var(--theme); color:#fff; border:none; border-radius:999px; padding:14px 20px; font-weight:800; cursor:pointer; box-shadow:0 16px 30px rgba(46,125,50,.25); }
+    .fab.fab-secondary{ right:120px; background:#256d2a; }
+    .toast{ position:fixed; left:50%; bottom:96px; transform:translateX(-50%); background:#111827; color:#fff; padding:10px 14px; border-radius:10px; opacity:0; pointer-events:none; transition:.25s; }
+    .toast.show{ opacity:.96; }
+  </style>
+</head>
+<body>
+  <!-- 登录视图：源自 login.html 的主体内容 -->
+  <div id="login-view">
+    <main class="card" role="main">
+      <div class="brand" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="24" height="24" rx="8" fill="rgba(46,125,50,0.10)"></rect>
+          <path d="M18.5 6.5c-5.5 0-9 3.5-9 9 0 0 3.5 0 9-5.5V6.5Z" fill="#2e7d32"></path>
+        </svg>
+        <strong>森绿</strong>
+      </div>
+      <h1>欢迎登录</h1>
+      <form id="login-form" action="#" method="post" novalidate>
+        <div class="field">
+          <label for="username">用户名</label>
+          <input class="input" id="username" name="username" type="text" placeholder="输入用户名" autocomplete="username" required>
+        </div>
+        <div class="field password-row">
+          <label for="password">密码</label>
+          <input class="input" id="password" name="password" type="password" placeholder="至少 8 位" minlength="8" autocomplete="current-password" required>
+          <button class="toggle" type="button" id="togglePassword" aria-label="显示或隐藏密码" aria-pressed="false">显示</button>
+        </div>
+        <div class="row">
+          <label class="check"><input type="checkbox" name="remember"> 记住我</label>
+        </div>
+        <button class="btn" type="submit">登录</button>
+      </form>
+      <footer>© 2025 Senlü. 保持简洁 · 保持专注</footer>
+    </main>
+  </div>
+  <!-- 应用视图：源自 demo2.html 的主体内容，初始隐藏 -->
+  <div id="app-view" style="display:none">
+    <div class="topbar">
+      <div class="progress" id="progress">0 / 0 已确认</div>
+      <button class="btn btn-ghost" id="logoutBtn" title="退出登录">退出</button>
+    </div>
+    <div class="wrap">
+      <aside class="sidebar">
+        <input class="search" id="search" placeholder="搜索音频名 / 关键字…" />
+        <div class="audio-list" id="audioList"></div>
+      </aside>
+      <main class="main" id="main">
+        <div class="empty">正在从后端加载数据…（若失败将展示 30 条演示数据）</div>
+      </main>
+    </div>
+    <button class="fab fab-secondary" id="nextBtn">➡ 继续</button>
+    <button class="fab" id="saveBtn">💾 存储</button>
+    <div class="toast" id="toast">正在保存到后端…</div>
+  </div>
+  <!-- 登录页交互脚本（接入后端登录校验） -->
+  <script>
+    // 密码显隐切换
+    (function(){
+      const $pwd = document.getElementById('password');
+      const $btn = document.getElementById('togglePassword');
+      $btn?.addEventListener('click', () => {
+        const isHidden = $pwd.type === 'password';
+        $pwd.type = isHidden ? 'text' : 'password';
+        $btn.textContent = isHidden ? '隐藏' : '显示';
+        $btn.setAttribute('aria-pressed', String(isHidden));
+        $pwd.focus();
+      });
+    })();
+    // 登录提交：调用后端 /api/login 校验通过后切换到应用视图
+    (function(){
+      const form = document.getElementById('login-form');
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        const API_BASE = (location.protocol === 'file:') ? 'http://127.0.0.1:5000' : '';
+        // 调用后端登录校验
+        try {
+          const username = document.getElementById('username').value.trim();
+          const password = document.getElementById('password').value;
+          const resp = await fetch(`${API_BASE}/api/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          });
+          if (!resp.ok) { alert('用户名密码错误'); return; }
+        } catch(err) {
+          console.error('login error:', err);
+          alert('无法连接后端，请确认 server_mysql.py 已启动');
+          return;
+        }
+        // 登录成功后记录用户名并切换到应用视图
+        try { window.__username = document.getElementById('username').value.trim(); sessionStorage.setItem('username', window.__username); } catch(e) {}
+        const loginStyle = document.getElementById('login-style');
+        if (loginStyle) { window.__loginStyleCSS = loginStyle.textContent || ''; loginStyle.remove(); }
+        document.title = '标注工具 · 森绿主题';
+        document.getElementById('login-view').style.display = 'none';
+        document.getElementById('app-view').style.display = 'block';
+        // 切换到应用后，按当前用户重新加载数据以恢复进度
+        if (typeof window.__appReloadPage === 'function') {
+          window.__appReloadPage(0);
+        }
+      });
+    })();
+  </script>
+  <!-- 退出登录：恢复登录样式与视图 -->
+  <script>
+    (function(){
+      const ensureLoginStyle = () => {
+        if (!document.getElementById('login-style')) {
+          const st = document.createElement('style'); st.id = 'login-style';
+          st.textContent = (window.__loginStyleCSS || '').trim();
+          if (!st.textContent) {
+            // 极端兜底：若无缓存样式，也不阻塞功能
+            st.textContent = ':root{--bg:#f3f6f3;} body{margin:0;display:grid;place-items:center;}';
+          }
+          document.head.appendChild(st);
+        }
+      };
+      const logout = () => {
+        ensureLoginStyle();
+        document.getElementById('app-view').style.display = 'none';
+        document.getElementById('login-view').style.display = 'block';
+        document.title = '登录 · 森绿极简';
+        // 重置登录表单状态
+        const form = document.getElementById('login-form'); form?.reset();
+        const pwd = document.getElementById('password');
+        const tbtn = document.getElementById('togglePassword');
+        if (pwd && tbtn) { pwd.type = 'password'; tbtn.textContent = '显示'; tbtn.setAttribute('aria-pressed','false'); }
+      };
+      document.getElementById('logoutBtn')?.addEventListener('click', logout);
+    })();
+  </script>
+  <!-- 应用页脚本：对齐 demo2.html 的交互（恢复左侧播放/定位与右侧播放栏） -->
+  <script>
+  (() => {
+    const API_BASE = (location.protocol === 'file:') ? 'http://127.0.0.1:5000' : '';
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s??"").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;","&gt;":">",'"':"&quot;","'":"&#39;"}[m] || m));
+    const toast = msg => { const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1200); };
+    const state = { items:[], filteredIdx:[], currentIdx: null, page: 0, pageSize: 30 };
+    const $main=$("main"), $list=$("audioList"), $progress=$("progress"), $save=$("saveBtn");
+    function setProgress(){ const t=state.items.length, ok=state.items.filter(x=>x.confirmed).length; $progress.textContent=`${ok} / ${t} 已确认`; }
+    function renderList(){
+      $list.innerHTML="";
+      const kw=$("search").value.trim().toLowerCase();
+      const filtered = state.items
+        .map((x,i)=>({ i, hit: (x.name+" "+x.inputText+" "+x.fixText).toLowerCase().includes(kw) }))
+        .filter(o=>o.hit).map(o=>o.i);
+      state.filteredIdx = filtered;
+      filtered.forEach(i=>{
+        const it = state.items[i];
+        const el = document.createElement('div'); el.className = 'audio-item' + (it.confirmed ? ' confirmed' : '');
+        const btnPlay = document.createElement('button');
+        btnPlay.className = 'btn btn-play';
+        btnPlay.textContent = '播放';
+        btnPlay.onclick = () => {
+          state.currentIdx = i;
+          renderCards();
+          // 自动播放当前卡片中的音频
+          setTimeout(() => {
+            const au = document.querySelector(`audio[data-audio-idx="${i}"]`);
+            if (au) { try { au.play(); } catch(_){} }
+          }, 0);
+        };
+        const name = document.createElement('div'); name.className='name'; name.textContent = `${it.name}`;
+        const btnLocate = document.createElement('button');
+        btnLocate.className = 'btn btn-ghost';
+        btnLocate.textContent = '定位';
+        btnLocate.onclick = () => {
+          const card = document.getElementById(`card-${i}`);
+          if (card) {
+            card.scrollIntoView({ behavior:'smooth', block:'start' });
+            // 闪烁高亮
+            const old = card.style.boxShadow;
+            card.style.boxShadow = '0 0 0 3px var(--theme-weak)';
+            setTimeout(()=>{ card.style.boxShadow = old; }, 600);
+          }
+        };
+        el.append(btnPlay, name, btnLocate);
+        $list.append(el);
+      });
+    }
+    function renderCards(){
+      $main.innerHTML = '';
+      state.items.forEach((it, idx) => {
+        const card = document.createElement('section'); card.className='card'; card.id = `card-${idx}`;
+        const row1 = document.createElement('div'); row1.className='row';
+        const lb1 = document.createElement('div'); lb1.className='label'; lb1.textContent = '原始识别文本';
+        const tx1 = document.createElement('div'); tx1.className='text'; tx1.innerHTML = `<span class="badge">输入</span>${esc(it.inputText)}`;
+        row1.append(lb1, tx1);
+        const row2 = document.createElement('div'); row2.className='row';
+        const lb2 = document.createElement('div'); lb2.className='label'; lb2.textContent = '修订内容';
+        const ta = document.createElement('textarea'); ta.value = it.fixText || '';
+        ta.addEventListener('input', () => { it.fixText = ta.value; it.editing=true; });
+        row2.append(lb2, ta);
+        const bottom = document.createElement('div'); bottom.className='bottom';
+        const btn = document.createElement('button'); btn.className = 'confirm-btn' + (it.confirmed? ' ghost':'');
+        btn.textContent = it.confirmed? '已确认' : '确认修改';
+        btn.onclick = () => { it.confirmed = !it.confirmed; it.editing=false; renderCards(); renderList(); setProgress(); };
+        const abox = document.createElement('div'); abox.className='audio-box';
+        if (state.currentIdx === idx && it.audio) {
+          const au = document.createElement('audio');
+          au.setAttribute('controls', '');
+          au.dataset.audioIdx = String(idx);
+          // 若为本地 file 协议，需为以 /api/ 开头的相对接口补上 API 基址
+          au.src = (it.audio && it.audio.startsWith('/api/')) ? (API_BASE + it.audio) : it.audio;
+          au.style.width = '100%';
+          abox.append(au);
+        } else {
+          const tip = document.createElement('div'); tip.className='audio-tip';
+          tip.textContent = it.audio ? '点击左侧“播放”在此处控制音频' : '（无音频，示例数据）';
+          abox.append(tip);
+        }
+        bottom.append(btn,abox);
+        card.append(row1,row2,bottom);
+        card.style.opacity = (it.confirmed && !it.editing) ? .95 : 1;
+        $main.append(card);
+      });
+    }
+    function rebuild(){ renderCards(); renderList(); setProgress(); }
+    // ---- 分页加载数据 ----
+    async function loadPage(page){
+      state.page = page;
+      state.currentIdx = null;
+      const offset = page * state.pageSize;
+      try{
+        const uname = (window.__username || (typeof sessionStorage!== 'undefined' ? (sessionStorage.getItem('username')||'') : ''));
+        const resp = await fetch(`${API_BASE}/api/items?offset=${offset}&limit=${state.pageSize}&username=${encodeURIComponent(uname)}&hideConfirmed=1`, {headers: {"Accept":"application/json"}});
+        if(!resp.ok) throw new Error("bad status");
+        const items = await resp.json();
+        state.items = (items||[]).map((r,i)=>({
+          id: r.id ?? r["id_$oid"] ?? String(offset + i + 1),
+          name: r.name ?? (r.audio||`音频#${offset + i + 1}`),
+          audio: r.audio ?? "",
+          inputText: r.inputText ?? "",
+          fixText: r.fixText ?? (r.inputText ?? ""),
+          confirmed: !!r.confirmed,
+          editing: false
+        }));
+        rebuild();
+      }catch(e){
+        // 回退演示数据（30条）
+        const items=[]; for(let i=1;i<=state.pageSize;i++){
+          const name=`demo-${String(offset + i).padStart(3,"0")}.mp3`;
+          const text=`（示例）这是第 ${offset + i} 条识别文本。`;
+          items.push({ id:String(i), name, audio:"", inputText:text, fixText:text, confirmed: false, editing:false });
+        }
+        state.items = items; rebuild();
+      }
+    }
+    // ---- 仅保存到后端（不再下载 CSV） ----
+    async function saveToBackend(){
+      const payload = state.items.map(x=>({ id: String(x.id), fixText: x.fixText ?? "", confirmed: !!x.confirmed }));
+      try{
+        $save.disabled = true; $save.textContent = "⏳ 正在保存…";
+        const uname = (window.__username || (typeof sessionStorage!== 'undefined' ? (sessionStorage.getItem('username')||'') : ''));
+        const resp = await fetch(`${API_BASE}/api/annotations`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ username: uname, items: payload }) });
+        if(!resp.ok) throw new Error(await resp.text());
+        toast("已保存到后端");
+        return true;
+      }catch(err){
+        console.error("save error:", err);
+        toast("保存失败，请稍后重试");
+        return false;
+      }finally{
+        $save.disabled = false; $save.textContent = "💾 存储";
+      }
+    }
+    $("saveBtn").onclick = () => {
+      const total = state.items.length;
+      if (total === 0) { toast("暂无数据可保存"); return; }
+      const confirmed = state.items.filter(x => x.confirmed).length;
+      // 需全部确认（默认30条示例数据），否则不允许保存
+      if (confirmed !== total) { toast("有未确认的内容"); return; }
+      saveToBackend();
+    };
+    $("search").addEventListener("input", renderList);
+    // 继续按钮：保存当前页后加载下一页
+    $("nextBtn").onclick = async () => {
+      const total = state.items.length;
+      if (total === 0) { toast("暂无数据"); return; }
+      const confirmed = state.items.filter(x => x.confirmed).length;
+      if (confirmed !== total) { toast("有未确认的内容"); return; }
+      const ok = await saveToBackend();
+      if (!ok) return;
+      const nextPage = state.page + 1;
+      const preLen = state.items.length;
+      await loadPage(nextPage);
+      if (state.items.length === 0) {
+        // 没有更多数据，回退页码
+        state.page = nextPage - 1;
+        toast("已经是最后一页");
+      } else {
+        toast(`已切换到下一页（第 ${nextPage + 1} 页）`);
+      }
+    };
+    window.__appReloadPage = (p = 0) => loadPage(p);
+    loadPage(0);
+  })();
+  </script>
+
+  <script>
+    (function(){
+      try{
+        const u = (typeof sessionStorage !== 'undefined') ? (sessionStorage.getItem('username')||'') : '';
+        if(u){
+          window.__username = u;
+          const loginStyle = document.getElementById('login-style');
+          if (loginStyle) { window.__loginStyleCSS = loginStyle.textContent || ''; loginStyle.remove(); }
+          document.title = '标注工具 · 森绿主题';
+          document.getElementById('login-view').style.display = 'none';
+          document.getElementById('app-view').style.display = 'block';
+          if (typeof window.__appReloadPage === 'function') { window.__appReloadPage(0); }
+        }
+      }catch(e){}
+    })();
+  </script>
+
+</body>
+</html>     
